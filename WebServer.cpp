@@ -1,6 +1,4 @@
 #pragma once
-#include <direct.h>
-#define GetCurrentDir _getcwd
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -35,7 +33,19 @@ string responseToClient(string filename, int statusCode)
 	
 	std::ostringstream oss;
 
-	oss << "HTTP/1.1 " << errorCode << " OK\r\n";
+	if (errorCode == 404)
+	{
+		oss << "HTTP/1.1 404 Not Found\r\n";
+	}
+	else if (errorCode == 301)
+	{
+		oss << "HTTP/1.1 301 Moved Permanently\r\n";
+	}
+	else
+	{
+		oss << "HTTP/1.1 200 OK\r\n"; 
+	}
+
 	oss << "Cache-Control: no-cache, private\r\n";
 	oss << "Content-Type: text/html\r\n";
 	oss << "Content-Length: " << content.size() << "\r\n";
@@ -79,6 +89,7 @@ void WebServer::onMessageReceived(int clientSocket, const char* msg, int length)
 	else if (parsed.size() >= 3 && parsed[0] == "GET")
 	{
 		response = responseToClient("index.html", 200);
+
 	}
 
 	sendToClient(clientSocket, response.data(), response.size() + 1);
