@@ -1,13 +1,13 @@
+#include "Network.h"
 #include "WebServer.h"
 
 using namespace std; 
 
 int main()
 {
-	WebServer webServer("0.0.0.0", 8080);
-	if (webServer.init() != 0)
-	{
-		return 0; 
-	}
+	Network::Initialize(); 
+	WebServer webServer("127.0.0.1", 8080);
+	webServer.init();
 	webServer.run(); 
+	Network::Shutdown(); 
 }
